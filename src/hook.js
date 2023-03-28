@@ -4,6 +4,7 @@ import * as constant from './constant'
 export const hookAction = (instance, engine, time) => {
   const ropeHeight = engine.getVariable(constant.ropeHeight)
   if (!instance.ready) {
+    instance.pin = "top"
     instance.x = engine.width / 2
     instance.y = ropeHeight * -1.5
     instance.ready = true

@@ -38,7 +38,7 @@ export const getSwingBlockVelocity = (engine, time) => {
   const gameScore = engine.getVariable(constant.gameScore)
   const { hookSpeed } = engine.getVariable(constant.gameUserOption)
   if (hookSpeed) {
-    return hookSpeed(successCount, gameScore)
+    return Math.sin((time + successCount * 1000) / (200 / hookSpeed(successCount, gameScore)))
   }
   let hard
   switch (true) {
@@ -83,8 +83,11 @@ export const getLandBlockVelocity = (engine, time) => {
     case successCount < 23:
       hard = 0.002
       break
-    default:
+    case successCount < 30:
       hard = 0.003
+      break
+    default:
+      hard = 0.005
       break
   }
   return Math.cos(time / 200) * hard * width
@@ -155,7 +158,7 @@ export const addScore = (engine, isPerfect) => {
 
 export const drawYellowString = (engine, option) => {
   const {
-    string, size, x, y, textAlign, fontName = 'wenxue', fontWeight = 'normal'
+    string, size, x, y, textAlign, fontName = 'wenxue', fontWeight = 'normal', opacity = 1
   } = option
   const { ctx } = engine
   const fontSize = size
@@ -163,14 +166,64 @@ export const drawYellowString = (engine, option) => {
   ctx.save()
   ctx.beginPath()
   const gradient = ctx.createLinearGradient(0, 0, 0, y)
-  gradient.addColorStop(0, '#FAD961')
-  gradient.addColorStop(1, '#F76B1C')
+  gradient.addColorStop(0, 'rgba(250, 217, 97, ' + opacity + ')')
+  gradient.addColorStop(1, 'rgba(247, 107, 28, ' + opacity + ')')
   ctx.fillStyle = gradient
   ctx.lineWidth = lineSize
-  ctx.strokeStyle = '#FFF'
+  ctx.strokeStyle = 'rgba(255, 255, 255, ' + opacity + ")"
   ctx.textAlign = textAlign || 'center'
   ctx.font = `${fontWeight} ${fontSize}px ${fontName}`
   ctx.strokeText(string, x, y)
   ctx.fillText(string, x, y)
   ctx.restore()
+}
+
+export const updateSizes = (engine) => {
+  var gameWidth = window.innerWidth
+  var gameHeight = window.innerHeight
+  var ratio = 1.5
+  if (gameHeight / gameWidth <= ratio) {
+    gameWidth = Math.ceil(gameHeight / ratio)
+  }
+  if (engine.width == gameWidth * 2 && engine.height == gameHeight * 2){
+    return;
+  }
+  console.log("Update width")
+  $('.content').css({ "height": gameHeight + "px", "width": gameWidth + "px" })
+  $('.js-modal-content').css({ "width": gameWidth + "px" })
+  let canvasWidth = gameWidth
+  let canvasHeight = gameHeight
+  if (engine.highResolution) {
+    engine.canvas.style.width = `${canvasWidth}px`
+    engine.canvas.style.height = `${canvasHeight}px`
+    canvasWidth *= 2
+    canvasHeight *= 2
+  }
+  engine.canvas.width = canvasWidth
+  engine.canvas.height = canvasHeight
+  let multW = engine.canvas.width / engine.width
+  let oldDeltaY = engine.height - engine.width * ratio
+  let newDeltaY = engine.canvas.height - engine.canvas.width * ratio
+  engine.width = engine.canvas.width
+  engine.height = engine.canvas.height
+  engine.calWidth = engine.width * 0.5
+  engine.calHeight = engine.height * 0.5
+  engine.setVariable(constant.blockWidth, engine.width * 0.25)
+  engine.setVariable(constant.blockHeight, engine.getVariable(constant.blockWidth) * 0.71)
+  engine.setVariable(constant.cloudSize, engine.width * 0.3)
+  engine.setVariable(constant.ropeHeight, engine.width * 0.7)
+  engine.layerArr.forEach((l) => {
+    engine.instancesObj[l].forEach((i) => {
+      if (i.pin == "bottom") i.y -= oldDeltaY
+      if (i.pin == "middle") i.y -= oldDeltaY / 2
+      i.x *= multW
+      i.y *= multW
+      i.updateWidth(i.width * multW)
+      i.updateHeight(i.height * multW)
+      if (i.pin == "bottom") i.y += newDeltaY
+      if (i.pin == "middle") i.y += newDeltaY / 2
+    })
+  })
+  engine.getInstance("line").collisionX *= multW
+  engine.setVariable(constant.bgImgOffset, (engine.getVariable(constant.bgImgOffset) - oldDeltaY) * multW + newDeltaY)
 }

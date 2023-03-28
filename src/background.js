@@ -10,6 +10,9 @@ export const backgroundImg = (engine) => {
   if (offsetHeight > engine.height) {
     return
   }
+  if (offsetHeight < engine.height - zoomedHeight){
+    offsetHeight = engine.height - zoomedHeight
+  }
   engine.getTimeMovement(
     constant.moveDownMovement,
     [[offsetHeight, offsetHeight + (getMoveDownValue(engine, { pixelsPerFrame: s => s / 2 }))]],

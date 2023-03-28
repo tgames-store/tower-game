@@ -4,6 +4,7 @@ import * as constant from './constant'
 export const lineAction = (instance, engine, time) => {
   const i = instance
   if (!i.ready) {
+    i.pin = "bottom"
     i.y = engine.getVariable(constant.lineInitialOffset)
     i.ready = true
     i.collisionX = engine.width - engine.getVariable(constant.blockWidth)

@@ -42,6 +42,7 @@ export const flightAction = (instance, engine) => {
   if (!visible) return
   const size = engine.getVariable(constant.cloudSize)
   if (!ready) {
+    instance.type = "flight"
     const action = getActionConfig(engine, type)
     instance.ready = true
     instance.width = size
@@ -77,6 +78,7 @@ export const addFlight = (engine, number, type) => {
   })
   flight.imgName = `f${number}`
   flight.type = type
+  flight.pin = "bottom"
   engine.addInstance(flight, constant.flightLayer)
   engine.setVariable(constant.flightCount, number)
 }

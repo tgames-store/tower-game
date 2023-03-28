@@ -32,11 +32,13 @@ window.TowerGame = (option = {}) => {
   for (let i = 1; i <= 8; i += 1) {
     game.addImg(`c${i}`, pathGenerator(`c${i}.png`))
   }
+  game.addLayer(constant.cloudLayer)
   game.addLayer(constant.flightLayer)
   for (let i = 1; i <= 7; i += 1) {
     game.addImg(`f${i}`, pathGenerator(`f${i}.png`))
   }
   game.swapLayer(0, 1)
+  game.swapLayer(1, 2)
   game.addImg('tutorial', pathGenerator('tutorial.png'))
   game.addImg('tutorial-arrow', pathGenerator('tutorial-arrow.png'))
   game.addImg('heart', pathGenerator('heart.png'))
@@ -49,7 +51,7 @@ window.TowerGame = (option = {}) => {
   game.setVariable(constant.blockWidth, game.width * 0.25)
   game.setVariable(constant.blockHeight, game.getVariable(constant.blockWidth) * 0.71)
   game.setVariable(constant.cloudSize, game.width * 0.3)
-  game.setVariable(constant.ropeHeight, game.height * 0.4)
+  game.setVariable(constant.ropeHeight, game.width * 0.7)
   game.setVariable(constant.blockCount, 0)
   game.setVariable(constant.successCount, 0)
   game.setVariable(constant.failedCount, 0)
@@ -64,7 +66,7 @@ window.TowerGame = (option = {}) => {
     })
     cloud.index = i
     cloud.count = 5 - i
-    game.addInstance(cloud)
+    game.addInstance(cloud, constant.cloudLayer)
   }
   const line = new Instance({
     name: 'line',
@@ -112,6 +114,12 @@ window.TowerGame = (option = {}) => {
     game.addInstance(tutorialArrow)
     game.setTimeMovement(constant.bgInitMovement, 500)
     game.setTimeMovement(constant.tutorialMovement, 500)
+    game.setVariable(constant.gameStartNow, true)
+  }
+
+  game.continue = () => {
+    game.pauseAudio('game-over')
+    game.setVariable(constant.failedCount, 0)
     game.setVariable(constant.gameStartNow, true)
   }
 

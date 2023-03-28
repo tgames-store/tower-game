@@ -12,6 +12,7 @@ const randomCloudImg = (instance) => {
 export const cloudAction = (instance, engine) => {
   if (!instance.ready) {
     instance.ready = true
+    instance.pin = "bottom"
     randomCloudImg(instance)
     instance.width = engine.getVariable(constant.cloudSize)
     instance.height = engine.getVariable(constant.cloudSize)

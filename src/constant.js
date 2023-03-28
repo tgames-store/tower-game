@@ -22,7 +22,13 @@ export const blockHeight = 'BLOCK_HEIGHT'
 export const cloudSize = 'CLOUD_SIZE'
 export const ropeHeight = 'ROPE_HEIGHT'
 export const flightCount = 'FLIGHT_COUNT'
+
 export const flightLayer = 'FLIGHT_LAYER'
+export const tutorialLayer = 'TUTORIAL_LAYER'
+export const gameLayer = 'GAME_LAYER'
+export const backgroundLayer = 'BACKGROUND_LAYER'
+export const cloudLayer = 'CLOUD_LAYER'
+export const uxLayer = 'UX_LAYER'
 
 export const rotateRight = 'ROTATE_RIGHT'
 export const rotateLeft = 'ROTATE_LEFT'

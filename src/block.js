@@ -5,7 +5,8 @@ import {
   touchEventHandler,
   addSuccessCount,
   addFailedCount,
-  addScore
+  addScore,
+  drawYellowString
 } from './utils'
 import * as constant from './constant'
 
@@ -65,6 +66,7 @@ export const blockAction = (instance, engine, time) => {
   }
   if (!i.ready) {
     i.ready = true
+    i.pin = "top"
     i.status = constant.swing
     instance.updateWidth(engine.getVariable(constant.blockWidth))
     instance.updateHeight(engine.getVariable(constant.blockHeight))
@@ -146,6 +148,9 @@ export const blockAction = (instance, engine, time) => {
             instance.perfect = true
             addScore(engine, true)
             engine.playAudio('drop-perfect')
+            instance.multiply = engine.getVariable(constant.perfectCount, 0) + 1
+            instance.dropX = instance.x
+            instance.dropTime = time
           } else {
             addScore(engine)
             engine.playAudio('drop')
@@ -156,6 +161,7 @@ export const blockAction = (instance, engine, time) => {
       }
       break
     case constant.land:
+      i.pin = "bottom"
       engine.getTimeMovement(
         constant.moveDownMovement,
         [[instance.y, instance.y + (getMoveDownValue(engine, { pixelsPerFrame: s => s / 2 }))]],
@@ -218,6 +224,20 @@ const drawBlock = (instance, engine) => {
   const { perfect } = instance
   const bl = engine.getImg(perfect ? 'block-perfect' : 'block')
   engine.ctx.drawImage(bl, instance.x, instance.y, instance.width, instance.height)
+  const timedelta = engine.lastTime - engine.pausedTime - instance.dropTime
+  const posx = instance.dropX > engine.width * 0.11 ? instance.x - engine.width * 0.07 : instance.x + engine.width * 0.255
+  if (perfect && timedelta < 500) {
+    drawYellowString(engine, {
+      string: "x" + instance.multiply,
+      size: engine.width * 0.06,
+      x: posx,
+      y: instance.y + engine.width*(0.15 - timedelta/10000),
+      textAlign: 'left',
+      fontName: 'Arial',
+      fontWeight: 'bold',
+      opacity: Math.min(1, 3 - timedelta*3/500)
+    })
+  }
 }
 
 const drawRotatedBlock = (instance, engine) => {

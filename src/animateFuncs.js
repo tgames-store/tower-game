@@ -4,7 +4,8 @@ import {
   checkMoveDown,
   getMoveDownValue,
   drawYellowString,
-  getAngleBase
+  getAngleBase,
+  updateSizes
 } from './utils'
 import { addFlight } from './flight'
 import * as constant from './constant'
@@ -34,6 +35,7 @@ export const endAnimate = (engine) => {
     textAlign: 'right'
   })
   const score = engine.getImg('score')
+  const multiplier = engine.getImg('multiplier')
   const scoreWidth = score.width
   const scoreHeight = score.height
   const zoomedWidth = engine.width * 0.35
@@ -52,6 +54,7 @@ export const endAnimate = (engine) => {
     y: engine.width * 0.11,
     textAlign: 'right'
   })
+  
   const { ctx } = engine
   const heart = engine.getImg('heart')
   const heartWidth = heart.width
@@ -75,6 +78,7 @@ export const endAnimate = (engine) => {
 }
 
 export const startAnimate = (engine) => {
+  updateSizes(engine)
   const gameStartNow = engine.getVariable(constant.gameStartNow)
   if (!gameStartNow) return
   const lastBlock = engine.getInstance(`block_${engine.getVariable(constant.blockCount)}`)

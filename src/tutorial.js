@@ -5,6 +5,7 @@ export const tutorialAction = (instance, engine, time) => {
   const { width, height } = engine
   const { name } = instance
   if (!instance.ready) {
+    instance.pin = "middle"
     instance.ready = true
     const tutorialWidth = width * 0.2
     instance.updateWidth(tutorialWidth)
